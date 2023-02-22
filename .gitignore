@@ -1,5 +1,5 @@
 config.env
-dev_data
+dev-data
 .DS_STORE
 node_modules
 dump.rdb
