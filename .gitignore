@@ -3,3 +3,4 @@ dev-data
 .DS_STORE
 node_modules
 dump.rdb
+.vscode
