@@ -1,2 +1,5 @@
 config.env
 dev_data
+.DS_STORE
+node_modules
+dump.rdb
