@@ -5,7 +5,6 @@ const factory = require('./handlerFactory')
 
 exports.setReqBodyFields = (req, res, next) => {
   // setting fields for nested route /tours/tourId/review
-  console.log("check this", req.params)
   if (!req.body.tour) req.body.tour = req.params.tourId
   if (!req.body.user) req.body.user = req.user.id
   next()

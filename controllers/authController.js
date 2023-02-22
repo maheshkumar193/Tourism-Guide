@@ -45,7 +45,6 @@ exports.signup = catchAsync(async (req, res, next) => {
     passwordConfirm: req.body.passwordConfirm,
     changedPasswordAt: req.body.changedPasswordAt,
     role: req.body.role,
-    changedPasswordAt: req.body.changedPasswordAt,
     passwordResetToken: req.body.passwordResetToken,
     passwordResetExpires: req.body.passwordResetToken
   })
@@ -56,15 +55,11 @@ exports.signup = catchAsync(async (req, res, next) => {
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password} = req.body
 
-  console.log(email, password)
-
   if (!email || !password) {
     return next(new AppError('please provide email and password', 400))
   }
 
   const user = await User.findOne({email}).select('+password')
-
-  console.log(user)
 
   if(!user || !(await user.correctPassword(password, user.password))) return next(new AppError('please enter valid mail or password', 401))
 
@@ -76,7 +71,6 @@ exports.protect = catchAsync(async (req, res, next) => {
   let token
   if (req?.headers?.authorization?.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1]
-    console.log(token," is token");
   }
   if(!token) return next(new AppError('you are not logged in, please login to get access.', 401))
 
@@ -88,7 +82,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     end Date: 
   }
   */
-  console.log(decoded, "is JWT payload")
+  // console.log(decoded, "is JWT payload")
 
   // check if user still exists
   const user = await User.findById(decoded.id)
@@ -116,20 +110,15 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     return next(new AppError('There is no user with that email', 404))
   }
   //2. create reset token
-  console.log('before creating password reset token')
   const resetToken = user.createPasswordResetToken()
-  console.log(user,"before saving")
   user.save({validateBeforeSave: false}, (err, doc) => {
     if (err) return console.log('error while saving')
-    console.log('doc', doc)
   })
-  console.log(user,"after saving")
   //3. send reset token via mail
   //https://domain:port/endpoint/:token
   const resetURI = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`
 
   const message = `forgot your password? submit a patch request with new password and confirm password to ${resetURI}`
-  console.log("parallel chal raha")
   try {
     await sendEmail({
       mail: user.email,
@@ -145,7 +134,6 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     user.passwordResetToken = undefined
     user.passwordResetExpires = undefined
     await user.save({validateBeforeSave: false})
-    console.log('error while sending message',err)
     return next(new AppError('There was a problem sending mail. Try again later.',500))
   }
   
@@ -155,7 +143,6 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   //1. get user based on the token
   const passwordResetToken = req.params.token
   const hashedpasswordResetToken = crypto.createHash('sha256').update(passwordResetToken).digest('hex')
-  console.log('hashed reset password token: ',hashedpasswordResetToken)
   const user = await User.findOne({
     passwordResetToken: hashedpasswordResetToken,
      passwordResetExpires: {$gte: Date.now()}
@@ -187,7 +174,6 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   // update password
   user.password = req.body.newPassword
   user.passwordConfirm = req.body.newPasswordConfirm
-  console.log('updatePassword', user.password)
   //User.findByIdAndUpdate will not work as intended
   await user.save()
 

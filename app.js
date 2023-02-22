@@ -9,6 +9,7 @@ const helmet = require('helmet')
 const mongoDBSanitize = require('express-mongo-sanitize')
 const xssSantize = require('xss-clean')
 const hpp = require('hpp')
+require('./controllers/cacheController')
 
 console.log(`currently working on ${process.env.NODE_ENV} environment`)
 

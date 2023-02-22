@@ -19,7 +19,6 @@ function filterData(userData, ...fields) {
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   // create error if password data is posted
-  console.log("update me")
   if (req.body.password || req.body.passwordConfirm) return next(new AppError("please use /updateMyPassword route to update password", 403))
   // update user data
   // fiilter the user data, don't allow user to add roles, resetPasswordToken ....
@@ -27,7 +26,6 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   
   // as we are not updating any passwords here, running validators while saving is not necessary
   // so instead if .save, we can directly use update
-  console.log("new data", filteredData)
   await User.findByIdAndUpdate(req.user.id, filteredData)
   
   res.status(204).json({

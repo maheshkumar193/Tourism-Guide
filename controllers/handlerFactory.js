@@ -7,8 +7,6 @@ exports.deleteOne = (Model) => {
     // Model is can accessed because of lexical scope
     const doc = await Model.findByIdAndDelete(req.params.id)
     
-    console.log(doc)
-    
     if(!doc) return next(new AppError('No doc found with that ID',404))
   
     res.status(204).json({
@@ -49,7 +47,7 @@ exports.createOne = (Model) => {
 exports.getOne = (Model, popOps) => {
   return catchAsync(async (req, res, next) => {
     let query = Model.findById(req.params.id)
-    if (popOps) query = query.populate(popOps)
+    if (popOps) query = query.populate(popOps).cache({key: req.user?.id})
     const doc = await query
   
     if(!doc) return next(new AppError('No doc found with that ID',404))
@@ -70,7 +68,7 @@ exports.getAll = (Model) => {
       .sort()
       .limitFields()
       .paginate()
-    const docs = await features.query
+    const docs = await features.query.cache({key: req.user?.id})
     res.status(200).json({
       status: 'success',
       results: docs.length,
