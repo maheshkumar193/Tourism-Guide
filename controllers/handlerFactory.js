@@ -68,6 +68,8 @@ exports.getAll = (Model) => {
       .sort()
       .limitFields()
       .paginate()
+    // const docs = await features.query.explain().cache({key: req.user?.id})
+    // to check how many docs are scanned & how many docs are returned
     const docs = await features.query.cache({key: req.user?.id})
     res.status(200).json({
       status: 'success',

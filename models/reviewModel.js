@@ -31,6 +31,7 @@ const reviewSchema = Schema({
   toObject: {virtuals: true}
 })
 
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true })
 
 reviewSchema.pre(/^find/, function (next) {
   // this.populate({
@@ -50,8 +51,6 @@ reviewSchema.pre(/^find/, function (next) {
   
   next()
 })
-
-
 
 const reviewModel = mongoose.model('Reviews', reviewSchema)
 

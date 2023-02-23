@@ -56,7 +56,6 @@ userSchema.pre('save', async function (next) {
   //only run this function when password field is modified
   if (!this.isModified('password')) return next()
   //hash the password with salt length 12
-  console.log('pap hai', this)
   this.password = await bcrpyt.hash(this.password, 12)
   //delete passwordConfirm
   this.passwordConfirm = undefined
@@ -98,8 +97,7 @@ userSchema.methods.createPasswordResetToken = function () {
 
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000
 
-  console.log('created reset password token', this)
-  console.log({resetToken}, this.passwordResetExpires)
+  console.log('created reset password token')
   return resetToken
 }
 
